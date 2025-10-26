@@ -1,0 +1,21 @@
+### Process Request to retrieve
+POST http://localhost:4004/process/application/start
+Content-Type: application/json
+
+###
+GET http://localhost:4004/process/logs/process/{{processInstanceId}}
+
+###
+GET http://localhost:4004/process/logs/client/{{clientId}}
+
+###
+GET http://localhost:4004/process/logs
+
+###
+POST http://localhost:4004/process/external/check-status
+Content-Type: application/json
+
+""
+
+###
+GET http://localhost:4004/process/external/health

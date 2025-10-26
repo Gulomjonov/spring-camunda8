@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1"
+                  targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.40.0"
+                  xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL">
+    <bpmn:process id="application-process" isExecutable="true">
+        <bpmn:startEvent id="start-event" name="Application Received">
+            <bpmn:outgoing>Flow_1</bpmn:outgoing>
+            <bpmn:outgoing>Flow_1cgx0ux</bpmn:outgoing>
+        </bpmn:startEvent>
+        <bpmn:serviceTask id="log-process-start" name="Log Process Start">
+            <bpmn:extensionElements>
+                <zeebe:taskDefinition type="log-process-start"/>
+            </bpmn:extensionElements>
+            <bpmn:incoming>Flow_1</bpmn:incoming>
+            <bpmn:incoming>Flow_1cgx0ux</bpmn:incoming>
+            <bpmn:outgoing>Flow_2</bpmn:outgoing>
+            <bpmn:outgoing>Flow_1c12o3w</bpmn:outgoing>
+        </bpmn:serviceTask>
+        <bpmn:serviceTask id="check-client-status" name="Check Client Status">
+            <bpmn:extensionElements>
+                <zeebe:taskDefinition type="check-client-status"/>
+            </bpmn:extensionElements>
+            <bpmn:incoming>Flow_2</bpmn:incoming>
+            <bpmn:incoming>Flow_1c12o3w</bpmn:incoming>
+            <bpmn:outgoing>Flow_3</bpmn:outgoing>
+            <bpmn:outgoing>Flow_11x9m6l</bpmn:outgoing>
+        </bpmn:serviceTask>
+        <bpmn:exclusiveGateway id="status-gateway" name="Status Check" default="Flow_5">
+            <bpmn:incoming>Flow_3</bpmn:incoming>
+            <bpmn:incoming>Flow_11x9m6l</bpmn:incoming>
+            <bpmn:outgoing>Flow_4</bpmn:outgoing>
+            <bpmn:outgoing>Flow_5</bpmn:outgoing>
+            <bpmn:outgoing>Flow_1pgh5yj</bpmn:outgoing>
+            <bpmn:outgoing>Flow_0wz7yyy</bpmn:outgoing>
+        </bpmn:exclusiveGateway>
+        <bpmn:sequenceFlow id="Flow_4" name="SUCCESS" sourceRef="status-gateway" targetRef="log-success">
+            <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="feel"><![CDATA[clientStatus = "SUCCESS"]]>
+            </bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:sequenceFlow id="Flow_5" name="FAILED" sourceRef="status-gateway" targetRef="log-failure"/>
+        <bpmn:serviceTask id="log-success" name="Log Success">
+            <bpmn:extensionElements>
+                <zeebe:taskDefinition type="log-success"/>
+            </bpmn:extensionElements>
+            <bpmn:incoming>Flow_4</bpmn:incoming>
+            <bpmn:incoming>Flow_1pgh5yj</bpmn:incoming>
+            <bpmn:outgoing>Flow_6</bpmn:outgoing>
+            <bpmn:outgoing>Flow_1cdhml4</bpmn:outgoing>
+        </bpmn:serviceTask>
+        <bpmn:serviceTask id="log-failure" name="Log Failure">
+            <bpmn:extensionElements>
+                <zeebe:taskDefinition type="log-failure"/>
+            </bpmn:extensionElements>
+            <bpmn:incoming>Flow_5</bpmn:incoming>
+            <bpmn:incoming>Flow_0wz7yyy</bpmn:incoming>
+            <bpmn:outgoing>Flow_7</bpmn:outgoing>
+            <bpmn:outgoing>Flow_1k1urdm</bpmn:outgoing>
+        </bpmn:serviceTask>
+        <bpmn:endEvent id="success-end" name="Application Approved">
+            <bpmn:incoming>Flow_6</bpmn:incoming>
+            <bpmn:incoming>Flow_1cdhml4</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn:endEvent id="failure-end" name="Application Rejected">
+            <bpmn:incoming>Flow_7</bpmn:incoming>
+            <bpmn:incoming>Flow_1k1urdm</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="Flow_1" sourceRef="start-event" targetRef="log-process-start"/>
+        <bpmn:sequenceFlow id="Flow_2" sourceRef="log-process-start" targetRef="check-client-status"/>
+        <bpmn:sequenceFlow id="Flow_3" sourceRef="check-client-status" targetRef="status-gateway"/>
+        <bpmn:sequenceFlow id="Flow_6" sourceRef="log-success" targetRef="success-end"/>
+        <bpmn:sequenceFlow id="Flow_7" sourceRef="log-failure" targetRef="failure-end"/>
+        <bpmn:sequenceFlow id="Flow_1cgx0ux" name="" sourceRef="start-event" targetRef="log-process-start"/>
+        <bpmn:sequenceFlow id="Flow_1c12o3w" sourceRef="log-process-start" targetRef="check-client-status"/>
+        <bpmn:sequenceFlow id="Flow_11x9m6l" sourceRef="check-client-status" targetRef="status-gateway"/>
+        <bpmn:sequenceFlow id="Flow_1pgh5yj" sourceRef="status-gateway" targetRef="log-success"/>
+        <bpmn:sequenceFlow id="Flow_0wz7yyy" sourceRef="status-gateway" targetRef="log-failure"/>
+        <bpmn:sequenceFlow id="Flow_1cdhml4" sourceRef="log-success" targetRef="success-end"/>
+        <bpmn:sequenceFlow id="Flow_1k1urdm" sourceRef="log-failure" targetRef="failure-end"/>
+    </bpmn:process>
+    <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+        <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="application-process">
+            <bpmndi:BPMNShape id="StartEvent_1" bpmnElement="start-event">
+                <dc:Bounds x="173" y="102" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="ServiceTask_1" bpmnElement="log-process-start">
+                <dc:Bounds x="260" y="80" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="ServiceTask_2" bpmnElement="check-client-status">
+                <dc:Bounds x="420" y="80" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="ExclusiveGateway_1" bpmnElement="status-gateway" isMarkerVisible="true">
+                <dc:Bounds x="580" y="95" width="50" height="50"/>
+                <bpmndi:BPMNLabel>
+                    <dc:Bounds x="615.5" y="145" width="67" height="14"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="ServiceTask_3" bpmnElement="log-success">
+                <dc:Bounds x="690" y="40" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="ServiceTask_4" bpmnElement="log-failure">
+                <dc:Bounds x="690" y="160" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="EndEvent_1" bpmnElement="success-end">
+                <dc:Bounds x="852" y="62" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="EndEvent_2" bpmnElement="failure-end">
+                <dc:Bounds x="852" y="182" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="Flow_1cgx0ux_di" bpmnElement="Flow_1cgx0ux">
+                <di:waypoint x="209" y="120"/>
+                <di:waypoint x="260" y="120"/>
+                <bpmndi:BPMNLabel>
+                    <dc:Bounds x="223" y="102" width="23" height="14"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_1c12o3w_di" bpmnElement="Flow_1c12o3w">
+                <di:waypoint x="360" y="120"/>
+                <di:waypoint x="420" y="120"/>
+                <bpmndi:BPMNLabel>
+                    <dc:Bounds x="349" y="102" width="83" height="14"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_11x9m6l_di" bpmnElement="Flow_11x9m6l">
+                <di:waypoint x="520" y="120"/>
+                <di:waypoint x="580" y="120"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_1pgh5yj_di" bpmnElement="Flow_1pgh5yj">
+                <di:waypoint x="605" y="95"/>
+                <di:waypoint x="605" y="80"/>
+                <di:waypoint x="690" y="80"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_0wz7yyy_di" bpmnElement="Flow_0wz7yyy">
+                <di:waypoint x="605" y="145"/>
+                <di:waypoint x="605" y="200"/>
+                <di:waypoint x="690" y="200"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_1cdhml4_di" bpmnElement="Flow_1cdhml4">
+                <di:waypoint x="790" y="80"/>
+                <di:waypoint x="852" y="80"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_1k1urdm_di" bpmnElement="Flow_1k1urdm">
+                <di:waypoint x="790" y="200"/>
+                <di:waypoint x="852" y="200"/>
+            </bpmndi:BPMNEdge>
+        </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,27 @@
+server:
+  port: 4004
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+
+                    ## GET http://localhost:4004/api/process
+                    ## Forward -> http://task:4000/process
+                    - id: task-route
+                      uri: http://task:4000
+                      predicates:
+                        - Path=/process/**
+                      filters:
+                        - StripPrefix=1
+
+                    ## GET http://localhost:4004/api-docs/process
+                    ## Forward -> http://task:4000/v3/api-docs
+                    - id: api-docs-task-route
+                      uri: http://task:4000
+                      predicates:
+                        - Path=/api-docs/process
+                      filters:
+                        - RewritePath=/api-docs/process,/v3/api-docs
