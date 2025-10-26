@@ -17,23 +17,62 @@ CREATE INDEX IF NOT EXISTS idx_customers_status ON customers (status);
 
 -- Insert 20 sample customers with Uzbek names and different statuses
 INSERT INTO customers (client_id, first_name, last_name, status, created_by, last_modified_by)
-VALUES ('CLIENT001', 'Alisher', 'Ismoilov', 'ACTIVE', 'system', 'system'),
-       ('CLIENT002', 'Dilnoza', 'Xolmirzayeva', 'INACTIVE', 'system', 'system'),
-       ('CLIENT003', 'Javohir', 'Rahimov', 'PENDING', 'system', 'system'),
-       ('CLIENT004', 'Sevara', 'Toshpulatova', 'ACTIVE', 'system', 'system'),
-       ('CLIENT005', 'Farxod', 'Karimov', 'BLOCKED', 'system', 'system'),
-       ('CLIENT006', 'Madina', 'Yusupova', 'ACTIVE', 'system', 'system'),
-       ('CLIENT007', 'Bekzod', 'Ismoilov', 'INACTIVE', 'system', 'system'),
-       ('CLIENT008', 'Zarina', 'Sobirova', 'PENDING', 'system', 'system'),
-       ('CLIENT009', 'Shoxrux', 'Hakimov', 'ACTIVE', 'system', 'system'),
-       ('CLIENT010', 'Gulnora', 'Qodirova', 'ACTIVE', 'system', 'system'),
-       ('CLIENT011', 'Rustam', 'Tursunov', 'BLOCKED', 'system', 'system'),
-       ('CLIENT012', 'Dilrabo', 'Omonova', 'ACTIVE', 'system', 'system'),
-       ('CLIENT013', 'Sherzod', 'Abdurahmonov', 'PENDING', 'system', 'system'),
-       ('CLIENT014', 'Fotima', 'Rasulova', 'INACTIVE', 'system', 'system'),
-       ('CLIENT015', 'Aziz', 'Nazarov', 'ACTIVE', 'system', 'system'),
-       ('CLIENT016', 'Laylo', 'Hamidova', 'ACTIVE', 'system', 'system'),
-       ('CLIENT017', 'Jamshid', 'Saidov', 'BLOCKED', 'system', 'system'),
-       ('CLIENT018', 'Saida', 'Muxtorova', 'PENDING', 'system', 'system'),
-       ('CLIENT019', 'Bahrom', 'Joʻrayev', 'ACTIVE', 'system', 'system'),
-       ('CLIENT020', 'Nilufar', 'Xasanova', 'INACTIVE', 'system', 'system');
+SELECT 'CLIENT001', 'Alisher', 'Ismoilov', 'ACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT001')
+UNION ALL
+SELECT 'CLIENT002', 'Dilnoza', 'Xolmirzayeva', 'INACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT002')
+UNION ALL
+SELECT 'CLIENT003', 'Javohir', 'Rahimov', 'PENDING', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT003')
+UNION ALL
+SELECT 'CLIENT004', 'Sevara', 'Toshpulatova', 'ACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT004')
+UNION ALL
+SELECT 'CLIENT005', 'Farxod', 'Karimov', 'BLOCKED', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT005')
+UNION ALL
+SELECT 'CLIENT006', 'Madina', 'Yusupova', 'ACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT006')
+UNION ALL
+SELECT 'CLIENT007', 'Bekzod', 'Ismoilov', 'INACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT007')
+UNION ALL
+SELECT 'CLIENT008', 'Zarina', 'Sobirova', 'PENDING', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT008')
+UNION ALL
+SELECT 'CLIENT009', 'Shoxrux', 'Hakimov', 'ACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT009')
+UNION ALL
+SELECT 'CLIENT010', 'Gulnora', 'Qodirova', 'ACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT010')
+UNION ALL
+SELECT 'CLIENT011', 'Rustam', 'Tursunov', 'BLOCKED', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT011')
+UNION ALL
+SELECT 'CLIENT012', 'Dilrabo', 'Omonova', 'ACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT012')
+UNION ALL
+SELECT 'CLIENT013', 'Sherzod', 'Abdurahmonov', 'PENDING', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT013')
+UNION ALL
+SELECT 'CLIENT014', 'Fotima', 'Rasulova', 'INACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT014')
+UNION ALL
+SELECT 'CLIENT015', 'Aziz', 'Nazarov', 'ACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT015')
+UNION ALL
+SELECT 'CLIENT016', 'Laylo', 'Hamidova', 'ACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT016')
+UNION ALL
+SELECT 'CLIENT017', 'Jamshid', 'Saidov', 'BLOCKED', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT017')
+UNION ALL
+SELECT 'CLIENT018', 'Saida', 'Muxtorova', 'PENDING', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT018')
+UNION ALL
+SELECT 'CLIENT019', 'Bahrom', 'Joʻrayev', 'ACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT019')
+UNION ALL
+SELECT 'CLIENT020', 'Nilufar', 'Xasanova', 'INACTIVE', 'system', 'system'
+WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT020');
