@@ -17,16 +17,6 @@ public class ProcessWorkers {
     private final LoggingService loggingService;
     private final ExternalSystemService externalSystemService;
 
-    @JobWorker(type = "log-process-start")
-    public Map<String, Object> logProcessStart(ActivatedJob job) {
-        Map<String, Object> variables = job.getVariablesAsMap();
-        String clientId = (String) variables.get("clientId");
-
-        loggingService.logProcessStart(job.getProcessInstanceKey(), clientId);
-
-        return Map.of("processStarted", true);
-    }
-
     @JobWorker(type = "check-client-status")
     public Map<String, Object> checkClientStatus(ActivatedJob job) {
         Map<String, Object> variables = job.getVariablesAsMap();
@@ -43,23 +33,23 @@ public class ProcessWorkers {
         return Map.of("clientStatus", clientStatus);
     }
 
-    @JobWorker(type = "log-success")
-    public Map<String, Object> logSuccess(ActivatedJob job) {
-        Map<String, Object> variables = job.getVariablesAsMap();
-        String clientId = (String) variables.get("clientId");
-
-        loggingService.logProcessEnd(job.getProcessInstanceKey(), "SUCCESS", clientId);
-
-        return Map.of("finalStatus", "APPROVED");
-    }
-
-    @JobWorker(type = "log-failure")
-    public Map<String, Object> logFailure(ActivatedJob job) {
-        Map<String, Object> variables = job.getVariablesAsMap();
-        String clientId = (String) variables.get("clientId");
-
-        loggingService.logProcessEnd(job.getProcessInstanceKey(), "FAILED", clientId);
-
-        return Map.of("finalStatus", "REJECTED");
-    }
+//    @JobWorker(type = "log-success")
+//    public Map<String, Object> logSuccess(ActivatedJob job) {
+//        Map<String, Object> variables = job.getVariablesAsMap();
+//        String clientId = (String) variables.get("clientId");
+//
+//        loggingService.logProcessEnd(job.getProcessInstanceKey(), "SUCCESS", clientId);
+//
+//        return Map.of("finalStatus", "APPROVED");
+//    }
+//
+//    @JobWorker(type = "log-failure")
+//    public Map<String, Object> logFailure(ActivatedJob job) {
+//        Map<String, Object> variables = job.getVariablesAsMap();
+//        String clientId = (String) variables.get("clientId");
+//
+//        loggingService.logProcessEnd(job.getProcessInstanceKey(), "FAILED", clientId);
+//
+//        return Map.of("finalStatus", "REJECTED");
+//    }
 }

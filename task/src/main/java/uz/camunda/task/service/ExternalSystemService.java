@@ -10,6 +10,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import uz.camunda.task.dto.external.ExternalSystemResponse;
+import uz.camunda.task.model.client.Customer;
+import uz.camunda.task.model.enums.Status;
+import uz.camunda.task.repository.client.CustomerRepository;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -21,6 +24,7 @@ public class ExternalSystemService {
 
     private final RestTemplate restTemplate;
     private final LoggingService loggingService;
+    private final CustomerRepository customerRepository;
 
     @Value("${external.system.url:http://localhost:4000/api/check-status}")
     private String externalSystemUrl;
@@ -35,35 +39,16 @@ public class ExternalSystemService {
      */
     public String checkClientStatus(String clientId) {
         try {
-            loggingService.logInfo("Checking client status in external system",
-                    Map.of("clientId", clientId, "externalSystemUrl", externalSystemUrl));
 
-            // Prepare request
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+            Customer customer = customerRepository.findByClientId(clientId);
 
-            Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("clientId", clientId);
-            requestBody.put("requestTime", java.time.LocalDateTime.now().toString());
-
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-
-            // Make REST call to external system
-            ResponseEntity<ExternalSystemResponse> response = restTemplate.exchange(
-                    externalSystemUrl,
-                    HttpMethod.POST,
-                    entity,
-                    ExternalSystemResponse.class
-            );
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                String status = response.getBody().getStatus();
+            if (customer.getStatus().equals(Status.ACTIVE)) {
                 loggingService.logInfo("External system response received",
-                        Map.of("clientId", clientId, "status", status));
-                return status;
+                        Map.of("clientId", clientId, "status", customer.getStatus()));
+                return customer.getStatus().toString();
             } else {
                 loggingService.logError("External system returned error",
-                        Map.of("clientId", clientId, "statusCode", response.getStatusCodeValue()));
+                        Map.of("clientId", clientId, "statusCode", customer.getStatus()));
                 return "FAILED";
             }
 

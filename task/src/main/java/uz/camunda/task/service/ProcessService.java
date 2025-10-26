@@ -23,4 +23,17 @@ public class ProcessService {
         loggingService.logProcessStart(result.getProcessInstanceKey(), request.getClientId());
         return "Process started with instance key: " + result.getProcessInstanceKey();
     }
+
+    public String startCreateClient(String clientId) {
+        var result = zeebeClient.newCreateInstanceCommand()
+                .bpmnProcessId("end-event")
+                .latestVersion()
+                .variables(clientId)
+                .send()
+                .join();
+
+        loggingService.logProcessEndByNewClient(result.getProcessInstanceKey(), clientId);
+
+        return String.valueOf(result.getProcessInstanceKey());
+    }
 }

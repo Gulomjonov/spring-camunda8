@@ -136,4 +136,17 @@ public class LoggingService {
     public List<ProcessLog> getAllLogs() {
         return null;
     }
+
+    public void logProcessEndByNewClient(Long processInstanceKey, String clientId) {
+        ProcessLog log = new ProcessLog();
+        log.setProcessInstanceId(String.valueOf(processInstanceKey));
+        log.setActivityId("end-event");
+        log.setActivityName("Process Completed");
+        log.setEventType("PROCESS_END");
+        log.setMessage("Create new client");
+        log.setClientId(clientId);
+        log.setTimestamp(LocalDateTime.now());
+
+        processLogRepository.save(log);
+    }
 }

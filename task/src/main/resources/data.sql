@@ -15,7 +15,7 @@ CREATE TABLE If NOT EXISTS customers
 CREATE INDEX IF NOT EXISTS idx_customers_client_id ON customers (client_id);
 CREATE INDEX IF NOT EXISTS idx_customers_status ON customers (status);
 
--- Insert 20 sample customers with Uzbek names and different statuses
+-- Insert 20 sample customers
 INSERT INTO customers (client_id, first_name, last_name, status, created_by, last_modified_by)
 SELECT 'CLIENT001', 'Alisher', 'Ismoilov', 'ACTIVE', 'system', 'system'
 WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT001')

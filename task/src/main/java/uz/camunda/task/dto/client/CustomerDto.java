@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
-public class ApplicationRequest  {
+public class CustomerDto {
 
     private String clientId;
     private String firstName;
