@@ -1,11 +1,11 @@
 package uz.camunda.task.model.log;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.camunda.task.model.Auditable;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

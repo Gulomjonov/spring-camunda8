@@ -1,6 +1,7 @@
 package uz.camunda.task.worker;
 
 import io.camunda.zeebe.client.api.response.ActivatedJob;
+import io.camunda.zeebe.spring.client.annotation.JobWorker;
 import io.camunda.zeebe.spring.client.annotation.ZeebeWorker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ public class ProcessWorkers {
     private final LoggingService loggingService;
     private final ExternalSystemService externalSystemService;
 
-    @ZeebeWorker(type = "log-process-start")
+    @JobWorker(type = "log-process-start")
     public Map<String, Object> logProcessStart(ActivatedJob job) {
         Map<String, Object> variables = job.getVariablesAsMap();
         String clientId = (String) variables.get("clientId");
@@ -26,7 +27,7 @@ public class ProcessWorkers {
         return Map.of("processStarted", true);
     }
 
-    @ZeebeWorker(type = "check-client-status")
+    @JobWorker(type = "check-client-status")
     public Map<String, Object> checkClientStatus(ActivatedJob job) {
         Map<String, Object> variables = job.getVariablesAsMap();
         String clientId = (String) variables.get("clientId");
@@ -42,7 +43,7 @@ public class ProcessWorkers {
         return Map.of("clientStatus", clientStatus);
     }
 
-    @ZeebeWorker(type = "log-success")
+    @JobWorker(type = "log-success")
     public Map<String, Object> logSuccess(ActivatedJob job) {
         Map<String, Object> variables = job.getVariablesAsMap();
         String clientId = (String) variables.get("clientId");
@@ -52,7 +53,7 @@ public class ProcessWorkers {
         return Map.of("finalStatus", "APPROVED");
     }
 
-    @ZeebeWorker(type = "log-failure")
+    @JobWorker(type = "log-failure")
     public Map<String, Object> logFailure(ActivatedJob job) {
         Map<String, Object> variables = job.getVariablesAsMap();
         String clientId = (String) variables.get("clientId");

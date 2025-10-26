@@ -1,122 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
                   xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   id="Definitions_1"
-                  targetNamespace="http://bpmn.io/schema/bpmn"
-                  exporter="Camunda Modeler"
-                  exporterVersion="5.40.0">
+                  targetNamespace="http://bpmn.io/schema/bpmn">
 
-    <bpmn:process id="application-process" isExecutable="true">
+    <bpmn:process id="status_check_process" name="Status Check Process" isExecutable="true">
 
-        <!-- Start Event -->
-        <bpmn:startEvent id="start-event" name="Application Received">
-            <bpmn:outgoing>Flow_1</bpmn:outgoing>
-        </bpmn:startEvent>
+        <bpmn:startEvent id="StartEvent_Status" name="Start" />
 
-        <!-- Log Process Start -->
-        <bpmn:serviceTask id="log-process-start" name="Log Process Start">
-            <bpmn:extensionElements>
-                <zeebe:taskDefinition type="log-process-start" />
-            </bpmn:extensionElements>
-            <bpmn:incoming>Flow_1</bpmn:incoming>
-            <bpmn:outgoing>Flow_2</bpmn:outgoing>
-        </bpmn:serviceTask>
-        <bpmn:sequenceFlow id="Flow_1" sourceRef="start-event" targetRef="log-process-start" />
+        <bpmn:sequenceFlow id="Flow_Start_Gateway" sourceRef="StartEvent_Status" targetRef="Gateway_CheckStatus" />
 
-        <!-- Check Client Status -->
-        <bpmn:serviceTask id="check-client-status" name="Check Client Status">
-            <bpmn:extensionElements>
-                <zeebe:taskDefinition type="check-client-status" />
-            </bpmn:extensionElements>
-            <bpmn:incoming>Flow_2</bpmn:incoming>
-            <bpmn:outgoing>Flow_3</bpmn:outgoing>
-        </bpmn:serviceTask>
-        <bpmn:sequenceFlow id="Flow_2" sourceRef="log-process-start" targetRef="check-client-status" />
+        <bpmn:exclusiveGateway id="Gateway_CheckStatus" name="Check Status" />
 
-        <!-- Exclusive Gateway for Status Check -->
-        <bpmn:exclusiveGateway id="status-gateway" name="Status Check" default="Flow_FAILED">
-            <bpmn:incoming>Flow_3</bpmn:incoming>
-            <bpmn:outgoing>Flow_SUCCESS</bpmn:outgoing>
-            <bpmn:outgoing>Flow_APPROVED</bpmn:outgoing>
-            <bpmn:outgoing>Flow_REJECTED</bpmn:outgoing>
-            <bpmn:outgoing>Flow_FAILED</bpmn:outgoing>
-        </bpmn:exclusiveGateway>
-        <bpmn:sequenceFlow id="Flow_3" sourceRef="check-client-status" targetRef="status-gateway" />
-
-        <!-- Gateway outgoing flows with conditions -->
-        <bpmn:sequenceFlow id="Flow_SUCCESS" sourceRef="status-gateway" targetRef="log-success">
-            <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="feel"><![CDATA[clientStatus = "SUCCESS"]]></bpmn:conditionExpression>
+        <!-- ACTIVE PATH -->
+        <bpmn:sequenceFlow id="Flow_Active" sourceRef="Gateway_CheckStatus" targetRef="Task_Active">
+            <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="feel">
+                status = "ACTIVE"
+            </bpmn:conditionExpression>
         </bpmn:sequenceFlow>
-        <bpmn:sequenceFlow id="Flow_APPROVED" sourceRef="status-gateway" targetRef="log-success">
-            <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="feel"><![CDATA[clientStatus = "APPROVED"]]></bpmn:conditionExpression>
-        </bpmn:sequenceFlow>
-        <bpmn:sequenceFlow id="Flow_REJECTED" sourceRef="status-gateway" targetRef="log-failure">
-            <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="feel"><![CDATA[clientStatus = "REJECTED"]]></bpmn:conditionExpression>
-        </bpmn:sequenceFlow>
-        <bpmn:sequenceFlow id="Flow_FAILED" sourceRef="status-gateway" targetRef="log-failure" />
 
-        <!-- Log Success -->
-        <bpmn:serviceTask id="log-success" name="Log Success">
+        <bpmn:serviceTask id="Task_Active" name="Process Active">
             <bpmn:extensionElements>
-                <zeebe:taskDefinition type="log-success" />
+                <zeebe:taskDefinition type="active-handler"/>
             </bpmn:extensionElements>
-            <bpmn:incoming>Flow_SUCCESS</bpmn:incoming>
-            <bpmn:incoming>Flow_APPROVED</bpmn:incoming>
-            <bpmn:outgoing>Flow_success-end</bpmn:outgoing>
         </bpmn:serviceTask>
-        <bpmn:sequenceFlow id="Flow_success-end" sourceRef="log-success" targetRef="success-end" />
 
-        <!-- Log Failure -->
-        <bpmn:serviceTask id="log-failure" name="Log Failure">
+        <bpmn:sequenceFlow id="Flow_Active_End" sourceRef="Task_Active" targetRef="EndEvent_Status" />
+
+
+        <!-- INACTIVE PATH -->
+        <bpmn:sequenceFlow id="Flow_Inactive" sourceRef="Gateway_CheckStatus" targetRef="Task_Inactive">
+            <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="feel">
+                status = "INACTIVE"
+            </bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+
+        <bpmn:serviceTask id="Task_Inactive" name="Process Inactive">
             <bpmn:extensionElements>
-                <zeebe:taskDefinition type="log-failure" />
+                <zeebe:taskDefinition type="inactive-handler"/>
             </bpmn:extensionElements>
-            <bpmn:incoming>Flow_REJECTED</bpmn:incoming>
-            <bpmn:incoming>Flow_FAILED</bpmn:incoming>
-            <bpmn:outgoing>Flow_failure-end</bpmn:outgoing>
         </bpmn:serviceTask>
-        <bpmn:sequenceFlow id="Flow_failure-end" sourceRef="log-failure" targetRef="failure-end" />
 
-        <!-- End Events -->
-        <bpmn:endEvent id="success-end" name="Application Approved">
-            <bpmn:incoming>Flow_success-end</bpmn:incoming>
-        </bpmn:endEvent>
-        <bpmn:endEvent id="failure-end" name="Application Rejected">
-            <bpmn:incoming>Flow_failure-end</bpmn:incoming>
-        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="Flow_Inactive_End" sourceRef="Task_Inactive" targetRef="EndEvent_Status" />
+
+        <bpmn:endEvent id="EndEvent_Status" name="End" />
 
     </bpmn:process>
 
-    <!-- BPMN Diagram info -->
-    <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-        <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="application-process">
-            <bpmndi:BPMNShape id="StartEvent_1" bpmnElement="start-event">
-                <dc:Bounds x="150" y="100" width="36" height="36" />
+    <bpmndi:BPMNDiagram id="BPMNDiagram_Status">
+        <bpmndi:BPMNPlane id="BPMNPlane_Status" bpmnElement="status_check_process">
+
+            <bpmndi:BPMNShape id="StartEvent_Status_di" bpmnElement="StartEvent_Status">
+                <dc:Bounds x="150" y="150" width="36" height="36" />
             </bpmndi:BPMNShape>
-            <bpmndi:BPMNShape id="ServiceTask_1" bpmnElement="log-process-start">
-                <dc:Bounds x="250" y="80" width="100" height="80" />
+
+            <bpmndi:BPMNShape id="Gateway_CheckStatus_di" bpmnElement="Gateway_CheckStatus" isMarkerVisible="true">
+                <dc:Bounds x="260" y="145" width="50" height="50" />
             </bpmndi:BPMNShape>
-            <bpmndi:BPMNShape id="ServiceTask_2" bpmnElement="check-client-status">
-                <dc:Bounds x="400" y="80" width="100" height="80" />
+
+            <bpmndi:BPMNShape id="Task_Active_di" bpmnElement="Task_Active">
+                <dc:Bounds x="370" y="90" width="120" height="60" />
             </bpmndi:BPMNShape>
-            <bpmndi:BPMNShape id="ExclusiveGateway_1" bpmnElement="status-gateway" isMarkerVisible="true">
-                <dc:Bounds x="570" y="95" width="50" height="50" />
+
+            <bpmndi:BPMNShape id="Task_Inactive_di" bpmnElement="Task_Inactive">
+                <dc:Bounds x="370" y="220" width="120" height="60" />
             </bpmndi:BPMNShape>
-            <bpmndi:BPMNShape id="ServiceTask_3" bpmnElement="log-success">
-                <dc:Bounds x="690" y="50" width="100" height="80" />
+
+            <bpmndi:BPMNShape id="EndEvent_Status_di" bpmnElement="EndEvent_Status">
+                <dc:Bounds x="550" y="150" width="36" height="36" />
             </bpmndi:BPMNShape>
-            <bpmndi:BPMNShape id="ServiceTask_4" bpmnElement="log-failure">
-                <dc:Bounds x="690" y="180" width="100" height="80" />
-            </bpmndi:BPMNShape>
-            <bpmndi:BPMNShape id="EndEvent_1" bpmnElement="success-end">
-                <dc:Bounds x="830" y="65" width="36" height="36" />
-            </bpmndi:BPMNShape>
-            <bpmndi:BPMNShape id="EndEvent_2" bpmnElement="failure-end">
-                <dc:Bounds x="830" y="200" width="36" height="36" />
-            </bpmndi:BPMNShape>
+
+            <bpmndi:BPMNEdge id="Flow_Start_Gateway_di" bpmnElement="Flow_Start_Gateway">
+                <di:waypoint x="186" y="168" />
+                <di:waypoint x="260" y="168" />
+            </bpmndi:BPMNEdge>
+
+            <bpmndi:BPMNEdge id="Flow_Active_di" bpmnElement="Flow_Active">
+                <di:waypoint x="285" y="145" />
+                <di:waypoint x="285" y="120" />
+                <di:waypoint x="370" y="120" />
+            </bpmndi:BPMNEdge>
+
+            <bpmndi:BPMNEdge id="Flow_Inactive_di" bpmnElement="Flow_Inactive">
+                <di:waypoint x="285" y="195" />
+                <di:waypoint x="285" y="250" />
+                <di:waypoint x="370" y="250" />
+            </bpmndi:BPMNEdge>
+
+            <bpmndi:BPMNEdge id="Flow_Active_End_di" bpmnElement="Flow_Active_End">
+                <di:waypoint x="490" y="120" />
+                <di:waypoint x="568" y="168" />
+            </bpmndi:BPMNEdge>
+
+            <bpmndi:BPMNEdge id="Flow_Inactive_End_di" bpmnElement="Flow_Inactive_End">
+                <di:waypoint x="490" y="250" />
+                <di:waypoint x="568" y="168" />
+            </bpmndi:BPMNEdge>
+
         </bpmndi:BPMNPlane>
     </bpmndi:BPMNDiagram>
 

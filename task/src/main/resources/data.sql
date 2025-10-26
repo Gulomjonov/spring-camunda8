@@ -1,4 +1,4 @@
-CREATE TABLE customers
+CREATE TABLE If NOT EXISTS customers
 (
     id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     client_id          VARCHAR(255) NOT NULL,
@@ -12,8 +12,8 @@ CREATE TABLE customers
 );
 
 -- Create index for better performance
-CREATE INDEX idx_customers_client_id ON customers (client_id);
-CREATE INDEX idx_customers_status ON customers (status);
+CREATE INDEX IF NOT EXISTS idx_customers_client_id ON customers (client_id);
+CREATE INDEX IF NOT EXISTS idx_customers_status ON customers (status);
 
 -- Insert 20 sample customers with Uzbek names and different statuses
 INSERT INTO customers (client_id, first_name, last_name, status, created_by, last_modified_by)

@@ -1,12 +1,12 @@
 package uz.camunda.task.model.client;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.camunda.task.model.Auditable;
 import uz.camunda.task.model.enums.Status;
 
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
