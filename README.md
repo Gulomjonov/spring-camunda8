@@ -78,3 +78,8 @@ Zeebe, Operate, Tasklist и Optimize используют отдельную с�
 Будем рады предложениям и обратной связи!
 
 ---
+
+<img width="983" height="547" alt="image" src="https://github.com/user-attachments/assets/55952c33-b108-43a3-8c94-131ee52db6ba" />
+
+ Внешняя система – заглушка (JSON response SUCCESS/FAILED)
+
