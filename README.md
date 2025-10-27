@@ -1,5 +1,3 @@
-Mana GitHub uchun tayyor, silliq va tushunarli ruscha varianti (README.md formatida):
-
 ---
 
 ## Camunda Platform 8
