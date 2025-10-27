@@ -1,0 +1,12 @@
+### Customer Request to retrieve
+POST http://localhost:4004/process/customer/create
+Content-Type: application/json
+
+{
+  "clientId": "",
+  "firstName": "",
+  "lastName": ""
+}
+
+###
+GET http://localhost:4004/process/customer/list
