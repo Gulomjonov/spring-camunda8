@@ -2,12 +2,8 @@ package uz.camunda.task.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.camunda.task.dto.client.CustomerDto;
-import uz.camunda.task.dto.request.RequestDto;
 import uz.camunda.task.service.CustomerService;
 
 import java.util.Map;
@@ -19,7 +15,10 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    @PostMapping("/create/customer")
+    /**
+     * Добавмить новые клиенты
+     */
+    @PostMapping("/customer/create")
     public ResponseEntity<Map<String, Object>> startApplicationProcess(
             @RequestBody CustomerDto customerDto) {
 
@@ -37,6 +36,23 @@ public class CustomerController {
             return ResponseEntity.badRequest().body(Map.of(
                     "success", false,
                     "message", "Failed to create client: " + e.getMessage()
+            ));
+        }
+    }
+
+    /**
+     * Получить все журналы клиентов
+     */
+    @GetMapping("/customer/list")
+    public ResponseEntity<?> startApplicationProcess() {
+
+        try {
+
+            return ResponseEntity.ok(customerService.list());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Failed to get list customer: " + e.getMessage()
             ));
         }
     }

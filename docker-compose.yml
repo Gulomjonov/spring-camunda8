@@ -1,13 +1,11 @@
-# While the Docker images themselves are supported for production usage,
-# this docker-compose.yml is designed to be used by developers to run
-# an environment locally. It is not designed to be used in production.
-# We recommend to use Kubernetes in production with our Helm Charts:
+# Хотя сами образы Docker поддерживаются для использования в продакшене, # этот docker-compose.yml предназначен для использования разработчиками
+# для локального запуска среды. Он не предназначен для использования в продакшене. # Мы рекомендуем использовать Kubernetes в рабочей среде с нашими Helm Charts:
 # https://docs.camunda.io/docs/self-managed/platform-deployment/kubernetes-helm/
-# For local development, we recommend using KIND instead of `docker-compose`:
+# Для локальной разработки мы рекомендуем использовать KIND вместо `docker-compose`:
 # https://docs.camunda.io/docs/self-managed/platform-deployment/kubernetes-helm/#installing-the-camunda-helm-chart-locally-using-kind
 
-# This is a full configuration with Zeebe, Operate, Tasklist, Optimize, Identity, Keycloak, and Elasticsearch
-# See docker-compose-core.yml for a lightweight configuration that does not include Optimize, Identity, and Keycloak.
+# Это полная конфигурация с Zeebe, Operate, Tasklist, Optimize, Identity, Keycloak и Elasticsearch
+# См. docker-compose-core.yml для получения облегченной конфигурации, не включающей Optimize, Identity и Keycloak.
 
 services:
 
@@ -35,7 +33,7 @@ services:
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://elasticsearch:9200
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=1
-      # allow running with low disk space
+      # разрешить запуск при малом количестве места на диске
       - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
       - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
       - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
@@ -56,7 +54,7 @@ services:
       - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe:26500
       - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://elasticsearch:9200
       - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
-      # For more information regarding configuration with Identity see:
+      # Более подробную информацию о настройке с помощью Identity см.:
       # https://docs.camunda.io/docs/self-managed/operate-deployment/authentication/#identity
       - SPRING_PROFILES_ACTIVE=identity-auth
       - CAMUNDA_OPERATE_IDENTITY_ISSUER_URL=http://localhost:18080/auth/realms/camunda-platform
@@ -81,7 +79,7 @@ services:
       - CAMUNDA_TASKLIST_ZEEBE_GATEWAYADDRESS=zeebe:26500
       - CAMUNDA_TASKLIST_ELASTICSEARCH_URL=http://elasticsearch:9200
       - CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
-      # For more information regarding configuration with Identity see:
+      # Более подробную информацию о настройке с помощью Identity см.:
       # https://docs.camunda.io/docs/self-managed/tasklist-deployment/authentication/#identity
       - SPRING_PROFILES_ACTIVE=identity-auth
       - CAMUNDA_TASKLIST_IDENTITY_ISSUER_URL=http://localhost:18080/auth/realms/camunda-platform
@@ -150,7 +148,7 @@ services:
     depends_on:
       - keycloak
 
-  keycloak: # Updated Keycloak image
+  keycloak: # Обновленное изображение Keycloak
     container_name: keycloak
     image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-16.1.1}
     ports:
@@ -170,7 +168,7 @@ services:
     environment:
       - bootstrap.memory_lock=true
       - discovery.type=single-node
-      # allow running with low disk space
+      # разрешить запуск при малом количестве места на диске
       - cluster.routing.allocation.disk.threshold_enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
@@ -188,9 +186,9 @@ services:
     networks:
       - camunda-platform
 
-#  # ======================
-#  # Task Service (Spring Boot)
-#  # ======================
+  #  # ======================
+  #  # Task Service (Spring Boot)
+  #  # ======================
   task-service:
     build:
       context: ./task
@@ -218,6 +216,9 @@ services:
     networks:
       - camunda-platform
 
+  #  # ======================
+  #  # Api gateway (Spring Boot)
+  #  # ======================
   api-gateway:
     build:
       context: ./api-gateway
@@ -231,10 +232,10 @@ services:
 volumes:
   zeebe:
   elastic:
-  postgres_data:  # Added this missing volume definition
+  postgres_data:  # Добавлено отсутствующее определение громкости
 
 networks:
-  # Note there are two bridge networks: One for Camunda Platform and one for Identity.
-  # Operate, Tasklist, and Optimize use both
+  # Обратите внимание, что существуют две мостовые сети: одна для платформы Camunda и одна для Identity.
+  # Operate, Tasklist и Optimize используют обе.
   camunda-platform:
   identity-network:

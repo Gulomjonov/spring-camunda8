@@ -21,7 +21,7 @@ public class ProcessController {
 
 
     /**
-     * Start new application process
+     * Начать новый процесс подачи заявки
      */
     @PostMapping("/application/start")
     public ResponseEntity<Map<String, Object>> startApplicationProcess(
@@ -45,7 +45,7 @@ public class ProcessController {
     }
 
     /**
-     * Get process logs by process instance ID
+     * Получить журналы процессов по идентификатору экземпляра процесса
      */
     @GetMapping("/logs/process/{processInstanceId}")
     public ResponseEntity<List<ProcessLog>> getProcessLogs(
@@ -56,7 +56,7 @@ public class ProcessController {
     }
 
     /**
-     * Get process logs by client ID
+     * Получить журналы процессов по идентификатору клиента
      */
     @GetMapping("/logs/client/{clientId}")
     public ResponseEntity<List<ProcessLog>> getClientLogs(
@@ -67,7 +67,7 @@ public class ProcessController {
     }
 
     /**
-     * Get all process logs
+     * Получить все журналы процессов
      */
     @GetMapping("/logs")
     public ResponseEntity<List<ProcessLog>> getAllLogs() {

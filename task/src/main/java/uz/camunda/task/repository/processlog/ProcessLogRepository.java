@@ -14,5 +14,4 @@ public interface ProcessLogRepository extends JpaRepository<ProcessLog, UUID> {
 
     List<ProcessLog> findByClientIdOrderByTimestampAsc(String clientId);
 
-    List<ProcessLog> findAllByOrderByTimestampDesc();
 }

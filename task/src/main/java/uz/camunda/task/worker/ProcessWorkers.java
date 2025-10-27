@@ -33,6 +33,19 @@ public class ProcessWorkers {
         return Map.of("clientStatus", clientStatus);
     }
 
+    @JobWorker(type = "create-client")
+    public void createClient(ActivatedJob job) {
+        Map<String, Object> variables = job.getVariablesAsMap();
+        String clientId = (String) variables.get("clientId");
+
+        loggingService.logProcessEndByNewClient(job.getProcessInstanceKey(), clientId);
+
+        String clientStatus = externalSystemService.checkClientStatus(clientId);
+
+        loggingService.logGatewayDecision(job.getProcessInstanceKey(), "status-gateway",
+                "Client status: " + clientStatus, clientId);
+    }
+
 //    @JobWorker(type = "log-success")
 //    public Map<String, Object> logSuccess(ActivatedJob job) {
 //        Map<String, Object> variables = job.getVariablesAsMap();

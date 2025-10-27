@@ -1,104 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
                   xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   id="Definitions_1"
                   targetNamespace="http://bpmn.io/schema/bpmn">
 
-    <bpmn:process id="status_check_process" name="Status Check Process" isExecutable="true">
+    <bpmn:collaboration id="Collaboration_1c5gwip">
+        <bpmn:participant id="Participant_0kp0u7f" name="Main Process" processRef="Process_Application" />
+    </bpmn:collaboration>
 
-        <bpmn:startEvent id="StartEvent_Status" name="Start" />
+    <bpmn:process id="Process_Application" isExecutable="true">
 
-        <bpmn:sequenceFlow id="Flow_Start_Gateway" sourceRef="StartEvent_Status" targetRef="Gateway_CheckStatus" />
+        <!-- START EVENT -->
+        <bpmn:startEvent id="StartEvent_1" name="Start" />
 
-        <bpmn:exclusiveGateway id="Gateway_CheckStatus" name="Check Status" />
-
-        <!-- ACTIVE PATH -->
-        <bpmn:sequenceFlow id="Flow_Active" sourceRef="Gateway_CheckStatus" targetRef="Task_Active">
-            <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="feel">
-                status = "ACTIVE"
-            </bpmn:conditionExpression>
-        </bpmn:sequenceFlow>
-
-        <bpmn:serviceTask id="Task_Active" name="Process Active">
+        <!-- MAIN SERVICE TASK -->
+        <bpmn:serviceTask id="application-process" name="Process Application">
             <bpmn:extensionElements>
-                <zeebe:taskDefinition type="active-handler"/>
+                <zeebe:taskDefinition type="application-process-worker" />
             </bpmn:extensionElements>
         </bpmn:serviceTask>
 
-        <bpmn:sequenceFlow id="Flow_Active_End" sourceRef="Task_Active" targetRef="EndEvent_Status" />
+        <!-- GATEWAY -->
+        <bpmn:exclusiveGateway id="Gateway_0y23g2f" name="Success?"/>
 
-
-        <!-- INACTIVE PATH -->
-        <bpmn:sequenceFlow id="Flow_Inactive" sourceRef="Gateway_CheckStatus" targetRef="Task_Inactive">
-            <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="feel">
-                status = "INACTIVE"
-            </bpmn:conditionExpression>
-        </bpmn:sequenceFlow>
-
-        <bpmn:serviceTask id="Task_Inactive" name="Process Inactive">
+        <!-- SUCCESS END EVENT -->
+        <bpmn:endEvent id="end-event" name="Done">
             <bpmn:extensionElements>
-                <zeebe:taskDefinition type="inactive-handler"/>
+                <zeebe:taskDefinition type="success-end" />
+            </bpmn:extensionElements>
+        </bpmn:endEvent>
+
+        <!-- ERROR END EVENT -->
+        <bpmn:endEvent id="error-end-event" name="Error">
+            <bpmn:errorEventDefinition />
+        </bpmn:endEvent>
+
+        <!-- DOWN BRANCH TASK -->
+        <bpmn:serviceTask id="Activity_1wejndr" name="Send Notification">
+            <bpmn:extensionElements>
+                <zeebe:taskDefinition type="send-notify-worker" />
             </bpmn:extensionElements>
         </bpmn:serviceTask>
 
-        <bpmn:sequenceFlow id="Flow_Inactive_End" sourceRef="Task_Inactive" targetRef="EndEvent_Status" />
+        <!-- FLOWS -->
+        <bpmn:sequenceFlow id="Flow_0ytv270" sourceRef="StartEvent_1" targetRef="application-process" />
+        <bpmn:sequenceFlow id="Flow_12stcyu" sourceRef="application-process" targetRef="Gateway_0y23g2f" />
 
-        <bpmn:endEvent id="EndEvent_Status" name="End" />
+        <bpmn:sequenceFlow id="Flow_1ckjh1b" sourceRef="Gateway_0y23g2f" targetRef="end-event">
+            <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[status == "ACTIVE"]]></bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+
+        <bpmn:sequenceFlow id="Flow_1dscw1i" sourceRef="Gateway_0y23g2f" targetRef="error-end-event">
+            <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[status == "INACTIVE"]]></bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+
+        <bpmn:sequenceFlow id="Flow_0mmv5l5" sourceRef="Gateway_0y23g2f" targetRef="Activity_1wejndr">
+            <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[status == null]]></bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+
+        <bpmn:sequenceFlow id="Flow_07c19ie" sourceRef="Activity_1wejndr" targetRef="end-event" />
 
     </bpmn:process>
 
-    <bpmndi:BPMNDiagram id="BPMNDiagram_Status">
-        <bpmndi:BPMNPlane id="BPMNPlane_Status" bpmnElement="status_check_process">
+    <!-- DI GRAPHS -->
+    <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+        <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1c5gwip">
 
-            <bpmndi:BPMNShape id="StartEvent_Status_di" bpmnElement="StartEvent_Status">
-                <dc:Bounds x="150" y="150" width="36" height="36" />
+            <bpmndi:BPMNShape id="Participant_0kp0u7f_di" bpmnElement="Participant_0kp0u7f" isHorizontal="true">
+                <dc:Bounds x="132" y="70" width="758" height="400" />
             </bpmndi:BPMNShape>
 
-            <bpmndi:BPMNShape id="Gateway_CheckStatus_di" bpmnElement="Gateway_CheckStatus" isMarkerVisible="true">
-                <dc:Bounds x="260" y="145" width="50" height="50" />
+            <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+                <dc:Bounds x="182" y="222" width="36" height="36" />
             </bpmndi:BPMNShape>
 
-            <bpmndi:BPMNShape id="Task_Active_di" bpmnElement="Task_Active">
-                <dc:Bounds x="370" y="90" width="120" height="60" />
+            <bpmndi:BPMNShape id="Activity_0fj6hyg_di" bpmnElement="application-process">
+                <dc:Bounds x="270" y="200" width="100" height="80" />
             </bpmndi:BPMNShape>
 
-            <bpmndi:BPMNShape id="Task_Inactive_di" bpmnElement="Task_Inactive">
-                <dc:Bounds x="370" y="220" width="120" height="60" />
+            <bpmndi:BPMNShape id="Gateway_0y23g2f_di" bpmnElement="Gateway_0y23g2f" isMarkerVisible="true">
+                <dc:Bounds x="425" y="215" width="50" height="50" />
             </bpmndi:BPMNShape>
 
-            <bpmndi:BPMNShape id="EndEvent_Status_di" bpmnElement="EndEvent_Status">
-                <dc:Bounds x="550" y="150" width="36" height="36" />
+            <bpmndi:BPMNShape id="Event_1sduopr_di" bpmnElement="end-event">
+                <dc:Bounds x="532" y="222" width="36" height="36" />
             </bpmndi:BPMNShape>
 
-            <bpmndi:BPMNEdge id="Flow_Start_Gateway_di" bpmnElement="Flow_Start_Gateway">
-                <di:waypoint x="186" y="168" />
-                <di:waypoint x="260" y="168" />
+            <bpmndi:BPMNShape id="Event_0zhga4n_di" bpmnElement="error-end-event">
+                <dc:Bounds x="432" y="112" width="36" height="36" />
+            </bpmndi:BPMNShape>
+
+            <bpmndi:BPMNShape id="Activity_1avqje2_di" bpmnElement="Activity_1wejndr">
+                <dc:Bounds x="400" y="340" width="100" height="80" />
+            </bpmndi:BPMNShape>
+
+            <bpmndi:BPMNEdge id="Flow_0ytv270_di" bpmnElement="Flow_0ytv270">
+                <di:waypoint x="218" y="240" />
+                <di:waypoint x="270" y="240" />
             </bpmndi:BPMNEdge>
 
-            <bpmndi:BPMNEdge id="Flow_Active_di" bpmnElement="Flow_Active">
-                <di:waypoint x="285" y="145" />
-                <di:waypoint x="285" y="120" />
-                <di:waypoint x="370" y="120" />
+            <bpmndi:BPMNEdge id="Flow_12stcyu_di" bpmnElement="Flow_12stcyu">
+                <di:waypoint x="370" y="240" />
+                <di:waypoint x="425" y="240" />
             </bpmndi:BPMNEdge>
 
-            <bpmndi:BPMNEdge id="Flow_Inactive_di" bpmnElement="Flow_Inactive">
-                <di:waypoint x="285" y="195" />
-                <di:waypoint x="285" y="250" />
-                <di:waypoint x="370" y="250" />
+            <bpmndi:BPMNEdge id="Flow_1ckjh1b_di" bpmnElement="Flow_1ckjh1b">
+                <di:waypoint x="475" y="240" />
+                <di:waypoint x="532" y="240" />
             </bpmndi:BPMNEdge>
 
-            <bpmndi:BPMNEdge id="Flow_Active_End_di" bpmnElement="Flow_Active_End">
-                <di:waypoint x="490" y="120" />
-                <di:waypoint x="568" y="168" />
+            <bpmndi:BPMNEdge id="Flow_1dscw1i_di" bpmnElement="Flow_1dscw1i">
+                <di:waypoint x="450" y="215" />
+                <di:waypoint x="450" y="148" />
             </bpmndi:BPMNEdge>
 
-            <bpmndi:BPMNEdge id="Flow_Inactive_End_di" bpmnElement="Flow_Inactive_End">
-                <di:waypoint x="490" y="250" />
-                <di:waypoint x="568" y="168" />
+            <bpmndi:BPMNEdge id="Flow_0mmv5l5_di" bpmnElement="Flow_0mmv5l5">
+                <di:waypoint x="450" y="265" />
+                <di:waypoint x="450" y="340" />
+            </bpmndi:BPMNEdge>
+
+            <bpmndi:BPMNEdge id="Flow_07c19ie_di" bpmnElement="Flow_07c19ie">
+                <di:waypoint x="500" y="380" />
+                <di:waypoint x="550" y="380" />
+                <di:waypoint x="550" y="258" />
             </bpmndi:BPMNEdge>
 
         </bpmndi:BPMNPlane>

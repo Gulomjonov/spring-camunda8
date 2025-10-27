@@ -13,7 +13,7 @@ public class ExternalSystemController {
     private final Random random = new Random();
 
     /**
-     * Stub endpoint for external system status check
+     * Конечная точка-заглушка для проверки внешнего состояния системы
      */
     @PostMapping("/external/check-status")
     public ResponseEntity<Map<String, Object>> checkClientStatus(
@@ -44,7 +44,7 @@ public class ExternalSystemController {
     }
 
     /**
-     * Health check for external system
+     * Проверка работоспособности внешней системы
      */
     @GetMapping("/external/health")
     public ResponseEntity<Map<String, String>> healthCheck() {

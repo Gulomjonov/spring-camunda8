@@ -4,6 +4,8 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.stereotype.Component;
 
+//Это шлюзовая фабрика фильтров для обслуживания задач.
+
 @Component
 public class GatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 

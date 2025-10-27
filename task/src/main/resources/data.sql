@@ -11,11 +11,11 @@ CREATE TABLE If NOT EXISTS customers
     last_modified_date TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create index for better performance
+-- Создать индекс для повышения производительности клиентов
 CREATE INDEX IF NOT EXISTS idx_customers_client_id ON customers (client_id);
 CREATE INDEX IF NOT EXISTS idx_customers_status ON customers (status);
 
--- Insert 20 sample customers
+-- Вставьте 20 примеров клиентов
 INSERT INTO customers (client_id, first_name, last_name, status, created_by, last_modified_by)
 SELECT 'CLIENT001', 'Alisher', 'Ismoilov', 'ACTIVE', 'system', 'system'
 WHERE NOT EXISTS (SELECT 1 FROM customers WHERE client_id = 'CLIENT001')

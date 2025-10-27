@@ -16,6 +16,10 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
+/**
+ * Используется как базовый класс для всех объектов, которым требуется это свойство.
+ */
+
 @Getter
 @Setter
 @ToString

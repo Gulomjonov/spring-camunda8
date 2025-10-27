@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.camunda.task.model.log.ProcessLog;
 import uz.camunda.task.repository.processlog.ProcessLogRepository;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -134,7 +135,7 @@ public class LoggingService {
     }
 
     public List<ProcessLog> getAllLogs() {
-        return null;
+        return processLogRepository.findAll();
     }
 
     public void logProcessEndByNewClient(Long processInstanceKey, String clientId) {
@@ -145,6 +146,21 @@ public class LoggingService {
         log.setEventType("PROCESS_END");
         log.setMessage("Create new client");
         log.setClientId(clientId);
+        log.setTimestamp(LocalDateTime.now());
+
+        processLogRepository.save(log);
+    }
+
+    public void logToCreateCustomer(String message, Map<String, Object> context) {
+        ProcessLog log = new ProcessLog();
+        log.setProcessInstanceId(context.containsKey("processInstanceId") ?
+                String.valueOf(context.get("processInstanceId")) : "N/A");
+        log.setActivityId("pending-logger");
+        log.setActivityName("Information");
+        log.setEventType("PENDING");
+        log.setMessage("Pending: " + message + " | Context: " + context);
+        log.setClientId(context.containsKey("clientId") ?
+                String.valueOf(context.get("clientId")) : "N/A");
         log.setTimestamp(LocalDateTime.now());
 
         processLogRepository.save(log);
