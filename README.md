@@ -1,7 +1,3 @@
-Mana GitHub uchun tayyor, silliq va tushunarli ruscha varianti (README.md formatida):
-
----
-
 ## Camunda Platform 8
 
 Этот репозиторий содержит ссылки на ресурсы Camunda Platform 8, официальные релизы и файл `docker-compose.yaml` для локального развертывания.
@@ -13,8 +9,6 @@ Mana GitHub uchun tayyor, silliq va tushunarli ruscha varianti (README.md format
 * Релизы
 * Движок рабочих процессов Zeebe
 * Контакты
-
----
 
 ### Использование Docker Compose
 
@@ -29,9 +23,6 @@ Mana GitHub uchun tayyor, silliq va tushunarli ruscha varianti (README.md format
 * **Identity**
 * **Elasticsearch**
 * **Keycloak**
-
----
-
 ### Запуск
 
 Клонируйте репозиторий и выполните команду:
